@@ -20,7 +20,7 @@ import java.util.List;
 public class AgentInvocationHandler implements InvocationHandler, InternalAgent {
 
     private final AiServiceContext context;
-    private final AgentBuilder<?> builder;
+    private final BaseAgentBuilder<?, ?> builder;
     private final Object agent;
     private final UserMessageRecorder messageRecorder;
     private final boolean agenticScopeDependent;
@@ -30,7 +30,7 @@ public class AgentInvocationHandler implements InvocationHandler, InternalAgent 
     AgentInvocationHandler(
             AiServiceContext context,
             Object agent,
-            AgentBuilder<?> builder,
+            BaseAgentBuilder<?, ?> builder,
             UserMessageRecorder messageRecorder,
             boolean agenticScopeDependent) {
         this.context = context;
@@ -97,7 +97,7 @@ public class AgentInvocationHandler implements InvocationHandler, InternalAgent 
 
         if (method.getDeclaringClass() == Object.class) {
             return switch (method.getName()) {
-                case "toString" -> "Agent<" + builder.agentServiceClass.getSimpleName() + ">";
+                case "toString" -> "Agent<" + builder.getAgentServiceClass().getSimpleName() + ">";
                 case "hashCode" -> System.identityHashCode(agent);
                 default ->
                         throw new UnsupportedOperationException(
@@ -120,7 +120,7 @@ public class AgentInvocationHandler implements InvocationHandler, InternalAgent 
 
     @Override
     public Class<?> type() {
-        return builder.agentServiceClass;
+        return builder.getAgentServiceClass();
     }
 
     @Override
@@ -140,7 +140,7 @@ public class AgentInvocationHandler implements InvocationHandler, InternalAgent 
 
     @Override
     public Type outputType() {
-        return builder.agentReturnType;
+        return builder.getAgentReturnType();
     }
 
     @Override
